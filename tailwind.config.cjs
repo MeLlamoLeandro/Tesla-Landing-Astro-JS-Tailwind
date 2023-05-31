@@ -5,7 +5,11 @@ module.exports = {
 		fontFamily: {
 			sans:['Gotham SSm A, sans-serif']
 		},
-		extend: {},
+		extend: {
+			colors: {
+				'bg-tesla': '#171a20cc',
+			  },
+		},
 	},
 	plugins: [],
 }
