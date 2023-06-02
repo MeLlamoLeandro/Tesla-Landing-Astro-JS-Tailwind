@@ -3,57 +3,94 @@ import Logo from "./Logo.astro";
 ---
 
 <header
-	id="landing-header"
-	class="py-3 px-10 flex items-center fixed top-0 w-full justify-between z-40 text-white"
+  id="landing-header"
+  class="py-3 px-10 flex items-center fixed top-0 w-full justify-between z-40 text-white"
 >
-	<div class="flex flex-grow basis-0">
-		<Logo />
-	</div>
-	<nav>
-		<ul
-			class="flex text-sm [&>li>a]:text-current [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
-		>
-			<li><a href="#">Model S</a></li>
-			<li><a href="#">Model 3</a></li>
-			<li><a href="#">Model X</a></li>
-			<li><a href="#">Model Y</a></li>
-			<li><a href="#">Powerwall</a></li>
-			<li><a href="#">Carga</a></li>
-		</ul>
-	</nav>
-	<nav class="flex flex-grow basis-0 justify-end">
-		<ul
-			class="flex text-sm [&>li>a]:text-current [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
-		>
-			<!-- uso text-current para traer el valor actual -->
-			<li><a href="#">Soporte</a></li>
-			<li><a href="#">Cuenta</a></li>
-			<li><a href="#">Tienda</a></li>
-			<li><a href="#">Menú</a></li>
-		</ul>
-	</nav>
+  <div class="flex flex-grow basis-0">
+    <Logo />
+  </div>
+  <nav>
+    <ul
+      class="flex text-sm [&>li>a]:text-current [&>li>a]:align-middle [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
+    >
+      <li><a href="#">Model S</a></li>
+      <li><a href="#">Model 3</a></li>
+      <li><a href="#">Model X</a></li>
+      <li><a href="#">Model Y</a></li>
+      <li><a href="#">Powerwall</a></li>
+      <li><a href="#">Carga</a></li>
+    </ul>
+  </nav>
+  <nav class="flex flex-grow basis-0 justify-end">
+    <ul
+      class="flex text-sm [&>li>a]:text-current [&>li>a]:align-middle [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
+    >
+      <!-- uso text-current para traer el valor actual -->
+      <li><a href="#">Soporte</a></li>
+      <li><a href="#">Cuenta</a></li>
+      <li><a href="#">Tienda</a></li>
+      <li><a href="#">Menú</a></li>
+    </ul>
+  </nav>
+  <div
+    id="menu-backdrop"
+    class={`absolute
+		 bg-black/5 backdrop-blur-lg rounded 
+		 left-[var(--left)] top-[var(--top)] 
+		 w-[var(--width)] h-[var(--height)] 
+		 transition-all duration-500
+		 ease-in-out opacity-0 -z-10
+		 `}
+  >
+  </div>
 </header>
 <script>
-	const $header = document.querySelector("#landing-header") as HTMLElement; //esto es definicion de typeScript
+  const listItem = document.querySelectorAll("#landing-header li"); // selecciona cada elemento del menu na
+  const menuBackdrop = document.querySelector("#menu-backdrop") as HTMLElement; //selecciona el efecto del menu
 
-	/* defino las opciones, que es lo que hay que observar */
-	const observerOptions = {
-		root: null, // para que obseve el viewport, no un elemento en especial
-		rootMargin: "0px", // para que lo tome di bien aparece el elemento
-		threshold: 0.5, // el porcentaje de visibilidad que tiene que tener el elemento para detectarlo
-	};
-	/* defino el observador */
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			const { isIntersecting } = entry;
-			if (isIntersecting) {
-				const color = entry.target.getAttribute("data-header-color");
-				$header.style.color = color;
-			}
-		});
-	}, observerOptions); //agrego las opciones definidas
+  listItem.forEach((item) => {
+    item.addEventListener("mouseenter", () => {
+      const { left, top, width, height } = item.getBoundingClientRect()
+      const {clientHeight, clientWidth } = item
+      console.log(left, top, width, height)
+      console.log(clientWidth, clientHeight)
+      menuBackdrop.style.setProperty("--left", `${left}px`)
+      menuBackdrop.style.setProperty("--top", `${top}px`)
+      menuBackdrop.style.setProperty("--width", `${width}px`)
+      menuBackdrop.style.setProperty("--height", `${height}px`)
+      menuBackdrop.style.opacity = "1"
+      menuBackdrop.style.visibility = "visible"
+    })
 
-	/* invoco la funcion de transformar el texto en las sections */
-	const $sections = document.querySelectorAll(".landing-section");
-	$sections.forEach((section) => observer.observe(section));
+    item.addEventListener("mouseleave", () => {
+      menuBackdrop.style.opacity = "0"
+      menuBackdrop.style.visibility = "hidden"
+  })
+})
+
+</script>
+
+<script>
+  const $header = document.querySelector("#landing-header") as HTMLElement; //esto es definicion de typeScript
+
+  /* defino las opciones, que es lo que hay que observar */
+  const observerOptions = {
+    root: null, // para que obseve el viewport, no un elemento en especial
+    rootMargin: "0px", // para que lo tome di bien aparece el elemento
+    threshold: 0.5, // el porcentaje de visibilidad que tiene que tener el elemento para detectarlo
+  };
+  /* defino el observador */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const { isIntersecting } = entry;
+      if (isIntersecting) {
+        const color = entry.target.getAttribute("data-header-color");
+        $header.style.color = color;
+      }
+    });
+  }, observerOptions); //agrego las opciones definidas
+
+  /* invoco la funcion de transformar el texto en las sections */
+  const $sections = document.querySelectorAll(".landing-section");
+  $sections.forEach((section) => observer.observe(section));
 </script>
